@@ -1,0 +1,8 @@
+<h1>{{ artifact.artifact_name}}</h1>
+<h2>Comments</h2>
+<ul>
+    {% for comment in artifact.comment_set.all %}
+        {{ comment }}
+    {% endfor %}
+</ul>
+
