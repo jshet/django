@@ -1,17 +1,19 @@
-from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from datetime import datetime
 
+from base.models import User
+
 # Create your models here.
 
 class Work(models.Model):
-    artist = models.CharField(max_length=200)
+    artist = models.CharField(max_length=200, blank=True, null=True)
     title = models.CharField(max_length=200)
+    subject_matter = models.CharField(max_length=200, blank=True, null=True)
     date_created = models.DateTimeField('date added', auto_now_add=True)
     date_updated = models.DateTimeField('date updated', auto_now=True)
     collected_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    figure = models.ImageField(upload_to='images', null=True)
+    figure = models.ImageField(upload_to='images/', null=True)
     variant_of = models.ForeignKey('self', related_name='variant_of_work', null=True, blank=True, on_delete=models.CASCADE)
     fragment_of = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
     collected_from = models.CharField(max_length=500)

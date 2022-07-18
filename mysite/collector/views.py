@@ -10,7 +10,7 @@ from .models import Work, Comment
 
 class WorkCreateView(LoginRequiredMixin, CreateView):
     model = Work
-    fields = ['title', 'description']
+    fields = ['title', 'description', 'figure']
     template_name = 'collector/create.html'
     success_url = '/collector/'
 
@@ -67,7 +67,9 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     template_name = 'collector/create.html'
     success_url = '/collector/'
     work_id = ''
+
     def form_valid(self, form):
         form.instance.commentor = self.request.user
         form.instance.work_id = self.kwargs['work_id']
+
         return super().form_valid(form)
