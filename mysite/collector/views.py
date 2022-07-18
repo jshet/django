@@ -3,14 +3,29 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView 
-from .models import Work, Comment
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from .models import Work, Comment, Exhibit, Gallery
 
 # Create your views here.
 
+def IndexView(request):
+    context = {}
+    try:
+        galleries = Gallery.objects.filter(curator=request.user)
+        context['gallery_list'] = galleries
+    except:
+        pass
+    try:
+        works = Work.objects.filter(collected_by=request.user)
+        context['work_list'] = works
+    except:
+        pass
+    context = {'work_list':works, 'gallery_list':galleries}
+    return render(request, template_name='collector/index.html', context=context)
+
 class WorkCreateView(LoginRequiredMixin, CreateView):
     model = Work
-    fields = ['title', 'description', 'figure']
+    fields = ['figure', 'title', 'description', 'subject_matter']
     template_name = 'collector/create.html'
     success_url = '/collector/'
 
@@ -18,58 +33,88 @@ class WorkCreateView(LoginRequiredMixin, CreateView):
         form.instance.collected_by = self.request.user
         return super().form_valid(form)
 
-class WorkUpdateView(UpdateView):
+class WorkUpdateView(LoginRequiredMixin, UpdateView):
     model = Work 
     fields = ['title']
 
-class WorkDeleteView(DeleteView):
+class WorkDeleteView(LoginRequiredMixin, DeleteView):
     model = Work 
-    success_url = reverse_lazy('work-list')
+    success_url = reverse_lazy('collector:work-list')
 
-class IndexView(ListView):
-    template_name = 'collector/index.html'
+class WorkListView(LoginRequiredMixin, ListView):
     context_object_name = 'work_list'
 
     def get_queryset(self):
-        return Work.objects.all()
+        return Work.objects.filter(collected_by=self.request.user)
 
-class DetailView(DetailView):
+class WorkDetailView(LoginRequiredMixin, DetailView):
     model = Work
-    template_name = 'collector/detail.html'
+    template_name = 'collector/work_detail.html'
 
-class CommentFormView(CreateView):
-    model = Comment
-    fields = ['comment_text']
+class GalleryCreateView(LoginRequiredMixin, CreateView):
+    model = Gallery
+    fields = ['title', 'curatorial_statement']
     template_name = 'collector/create.html'
+    success_url = '/collector/'
 
     def form_valid(self, form):
-        work = get_object_or_404(Work, pk=self.kwargs['work_id'])
-        work.comment_set.create(comment_text=form['comment_text'].as_text)
+        form.instance.curator = self.request.user
+        return super().form_valid(form)
 
-        return HttpResponseRedirect(reverse('collector:index'))
+class GalleryUpdateView(LoginRequiredMixin, UpdateView):
+    model = Gallery 
+    fields = ['title', 'curator']
 
-def vote(request, work_id):
-    work = get_object_or_404(Work, work_id)
-    work.votes += 1
-    work.save()
+class GalleryDeleteView(LoginRequiredMixin, DeleteView):
+    model = Gallery 
+    success_url = reverse_lazy('collector:gallery-list')
 
-    return HttpResponseRedirect(reverse('collector:detail', args=(work.id)))
+class GalleryListView(LoginRequiredMixin, ListView):
+    context_object_name = 'gallery_list'
 
-def add_comment(request, work_id):
-    work = get_object_or_404(Work, pk=work_id)
-    form_comment_text = request.POST.get('comment_text')
-    work.comment_set.create(comment_text=form_comment_text)
-    return render(request, 'collector/detail.html', {'work':work})
+    def get_queryset(self):
+        return Gallery.objects.filter(curator=self.request.user)
+
+class GalleryDetailView(LoginRequiredMixin, DetailView):
+    model = Gallery
+    template_name = 'collector/gallery_detail.html'
+
+class ExhibitCreateView(LoginRequiredMixin, CreateView):
+    model = Exhibit
+    fields = ['title', 'curatorial_statement', 'works']
+    template_name = 'collector/create.html'
+    success_url = '/collector/'
+
+    def form_valid(self, form):
+        form.instance.curator = self.request.user
+        form.instance.gallery_id = self.kwargs['pk']
+        return super().form_valid(form)
+
+class ExhibitUpdateView(LoginRequiredMixin, UpdateView):
+    model = Exhibit 
+    fields = ['title', 'curatorial_statement']
+
+class ExhibitDeleteView(LoginRequiredMixin, DeleteView):
+    model = Exhibit 
+    success_url = reverse_lazy('collector:exhibit-list')
+
+class ExhibitListView(LoginRequiredMixin, ListView):
+    context_object_name = 'exhibit_list'
+
+    def get_queryset(self):
+        return Exhibit.objects.filter(curator=self.request.user)
+
+class ExhibitDetailView(LoginRequiredMixin, DetailView):
+    model = Exhibit
+    template_name = 'collector/exhibit_detail.html'
 
 class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
     fields = ['comment_text']
     template_name = 'collector/create.html'
-    success_url = '/collector/'
     work_id = ''
 
     def form_valid(self, form):
         form.instance.commentor = self.request.user
         form.instance.work_id = self.kwargs['work_id']
-
         return super().form_valid(form)

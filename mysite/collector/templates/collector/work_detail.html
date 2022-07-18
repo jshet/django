@@ -4,11 +4,14 @@
 <article>
     
     {% if work.figure %}
-    <img src="{{ work.figure.url }}" alt="" width="200" height="200">
+    <img src="{{ work.figure.url }}" alt="" width="600">
     {% endif %}
     
     
     <h1>{{ work.title}}</h1>
+    {% if request.user == work.collected_by %}
+    <a href="{% url 'collector:work-delete' work.id %}">Delete</a>
+    {% endif %}
     <p>{{ work.description }}</p>
     
     <time datetime="{{ work.date_created }}">Collected: {{ work.date_created }}</time>
