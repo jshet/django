@@ -10,7 +10,9 @@ from .models import Work, Comment
 
 class WorkCreateView(LoginRequiredMixin, CreateView):
     model = Work
-    fields = ['title']
+    fields = ['title', 'description']
+    template_name = 'collector/create.html'
+    success_url = '/collector/'
 
     def form_valid(self, form):
         form.instance.collected_by = self.request.user
@@ -29,7 +31,7 @@ class IndexView(ListView):
     context_object_name = 'work_list'
 
     def get_queryset(self):
-        return Work.objects.order_by('-collected_date')[:20]
+        return Work.objects.all()
 
 class DetailView(DetailView):
     model = Work
@@ -38,7 +40,7 @@ class DetailView(DetailView):
 class CommentFormView(CreateView):
     model = Comment
     fields = ['comment_text']
-    template_name = 'collector/add_comment.html'
+    template_name = 'collector/create.html'
 
     def form_valid(self, form):
         work = get_object_or_404(Work, pk=self.kwargs['work_id'])
@@ -58,3 +60,14 @@ def add_comment(request, work_id):
     form_comment_text = request.POST.get('comment_text')
     work.comment_set.create(comment_text=form_comment_text)
     return render(request, 'collector/detail.html', {'work':work})
+
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    fields = ['comment_text']
+    template_name = 'collector/create.html'
+    success_url = '/collector/'
+    work_id = ''
+    def form_valid(self, form):
+        form.instance.commentor = self.request.user
+        form.instance.work_id = self.kwargs['work_id']
+        return super().form_valid(form)

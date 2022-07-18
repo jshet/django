@@ -1,8 +1,21 @@
-<h1>{{ artifact.artifact_name}}</h1>
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ work.title}}</h1>
+<p>{{ work.description }}</p>
+
+<time datetime="{{ work.date_created }}">Collected: {{ work.date_created }}</time>
+<time datetime="{{ work.date_updated }}">Updated: {{ work.date_updated }}</time>
+
 <h2>Comments</h2>
 <ul>
-    {% for comment in artifact.comment_set.all %}
-        {{ comment }}
+    {% for comment in work.comment_set.all %}
+    <li>
+        {{ comment }} - {{ comment.commentor }} - {{ comment.date_created }}
+    </li>
     {% endfor %}
 </ul>
 
+<a href="{% url 'collector:comment-add' work.id %}">Add comment</a>
+
+{% endblock %}
