@@ -21,6 +21,15 @@ class Work(models.Model):
     def __str__(self):
         return self.title
 
+    def figure_url_or_default(self):
+        if self.figure:
+            return self.figure.url
+        else:
+            return '/images/default.jpg'
+
+    def get_absolute_url(self):
+        return reverse('collector:work-detail', args=[self.id])
+
 class Comment(models.Model):
     commentor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     work = models.ForeignKey(Work, on_delete=models.CASCADE)
@@ -49,6 +58,12 @@ class Gallery(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name_plural = "Galleries"
+
+    def get_absolute_url(self):
+        return reverse('collector:gallery-detail', args=[self.id])
+
 class Exhibit(models.Model):
     title = models.CharField(max_length=200)
     curator = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -58,4 +73,6 @@ class Exhibit(models.Model):
 
     def __str__(self):
         return self.title
-        
+
+    def get_absolute_url(self):
+        return reverse('collector:gallery-detail', args=[self.gallery_id])

@@ -35,7 +35,8 @@ class WorkCreateView(LoginRequiredMixin, CreateView):
 
 class WorkUpdateView(LoginRequiredMixin, UpdateView):
     model = Work 
-    fields = ['title']
+    fields = ['artist', 'figure', 'title', 'description', 'subject_matter']
+    template_name = 'collector/create.html'
 
 class WorkDeleteView(LoginRequiredMixin, DeleteView):
     model = Work 
@@ -55,7 +56,6 @@ class GalleryCreateView(LoginRequiredMixin, CreateView):
     model = Gallery
     fields = ['title', 'curatorial_statement']
     template_name = 'collector/create.html'
-    success_url = '/collector/'
 
     def form_valid(self, form):
         form.instance.curator = self.request.user
@@ -69,21 +69,14 @@ class GalleryDeleteView(LoginRequiredMixin, DeleteView):
     model = Gallery 
     success_url = reverse_lazy('collector:gallery-list')
 
-class GalleryListView(LoginRequiredMixin, ListView):
-    context_object_name = 'gallery_list'
-
-    def get_queryset(self):
-        return Gallery.objects.filter(curator=self.request.user)
-
 class GalleryDetailView(LoginRequiredMixin, DetailView):
     model = Gallery
     template_name = 'collector/gallery_detail.html'
 
 class ExhibitCreateView(LoginRequiredMixin, CreateView):
     model = Exhibit
-    fields = ['title', 'curatorial_statement', 'works']
+    fields = ['title', 'curatorial_statement']
     template_name = 'collector/create.html'
-    success_url = '/collector/'
 
     def form_valid(self, form):
         form.instance.curator = self.request.user
@@ -93,16 +86,11 @@ class ExhibitCreateView(LoginRequiredMixin, CreateView):
 class ExhibitUpdateView(LoginRequiredMixin, UpdateView):
     model = Exhibit 
     fields = ['title', 'curatorial_statement']
+    template_name = 'collector/create.html'
 
 class ExhibitDeleteView(LoginRequiredMixin, DeleteView):
     model = Exhibit 
     success_url = reverse_lazy('collector:exhibit-list')
-
-class ExhibitListView(LoginRequiredMixin, ListView):
-    context_object_name = 'exhibit_list'
-
-    def get_queryset(self):
-        return Exhibit.objects.filter(curator=self.request.user)
 
 class ExhibitDetailView(LoginRequiredMixin, DetailView):
     model = Exhibit

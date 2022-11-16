@@ -3,3 +3,4 @@ venv
 *.png
 *.sqlite3
 *.pyc
+**/__pycache__
