@@ -1,0 +1,24 @@
+{% extends 'pager/app_base.html' %}
+
+{% block content %}
+
+<h1>{{ request.user }}'s sources</h1>
+
+{% if source_list %}
+{% for source in source_list %}
+
+<article>
+    <img src="{{ source.figure_url_or_default }}" alt="" width="400">
+    <a href="{% url 'pager:source-detail' source.id %}">
+        <h3>{{ source.title }}</h3>
+    </a>
+    {{ source.description }}
+</article>
+
+{% endfor %}
+{% endif %}
+
+<!-- <a href="{% url 'pager:source-add' %}">Add a source</a> -->
+<a href="#">Add source</a>
+
+{% endblock %}

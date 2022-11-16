@@ -3,15 +3,15 @@
 {% block content %}
 
 <article>    
-    <h1>{{ gallery.title}}</h1>
+    <h1>{{ exhibit.title}}</h1>
 
-    {% if request.user == gallery.curator %}
-    <a href="{% url 'collector:gallery-delete' gallery.id %}">Delete</a>
+    {% if request.user == exhibit.curator %}
+    <a href="{% url 'collector:exhibit-delete' exhibit.id %}">Delete</a>
     {% endif %}
 
-    <p>{{ gallery.curatorial_statement }}</p>
+    <p>{{ exhibit.curatorial_statement }}</p>
     
-    {% for exhibit in gallery.exhibit_set.all %}
+    {% for exhibit in exhibit.exhibit_set.all %}
     <h2><a href="{% url 'collector:exhibit-detail' exhibit.id %}">{{ exhibit.title }}</a></h2>
     <a href="{% url 'collector:exhibit-update' exhibit.id %}">Edit</a>
     <p>{{ exhibit.curatorial_statement }}</p>
@@ -25,7 +25,7 @@
         {% endfor %}
     {% endfor %}
 
-    <a href="{% url 'collector:exhibit-add' gallery.id %}">Add exhibit</a>
+    <a href="{% url 'collector:exhibit-add' exhibit.id %}">Add exhibit</a>
 </article>
 
 {% endblock %}

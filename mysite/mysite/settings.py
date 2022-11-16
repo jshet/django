@@ -20,10 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!e9=k3h%11puq!#v_hm$w%fmua!li0azh^jdxw4)w5)9yyl60d'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG")
 
 ALLOWED_HOSTS = [
     'jshet.pythonanywhere.com',
@@ -34,6 +34,7 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     'collector.apps.CollectorConfig',
+    'pager.apps.PagerConfig',
     'base.apps.BaseConfig',
     'django.contrib.admin',
     'django.contrib.auth',

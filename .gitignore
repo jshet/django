@@ -1,6 +1,7 @@
 venv
 *.jpg
 *.png
+.env
 
 __pycache__/
 *.py[cod]
