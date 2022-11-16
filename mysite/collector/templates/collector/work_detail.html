@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'collector/app_base.html' %}
 
 {% block content %}
 <article>
@@ -7,15 +7,16 @@
     <img src="{{ work.figure.url }}" alt="" width="600">
     {% endif %}
     
-    
     <h1>{{ work.title}}</h1>
-    {% if request.user == work.collected_by %}
-    <a href="{% url 'collector:work-delete' work.id %}">Delete</a>
-    {% endif %}
-    <p>{{ work.description }}</p>
-    
     <time datetime="{{ work.date_created }}">Collected: {{ work.date_created }}</time>
     <time datetime="{{ work.date_updated }}">Updated: {{ work.date_updated }}</time>
+
+    {% if request.user == work.collected_by %}
+    <a href="{% url 'collector:work-update' work.id %}">Edit</a>
+    <a href="{% url 'collector:work-delete' work.id %}">Delete</a>
+    {% endif %}
+    
+    <p>{{ work.description }}</p>
     
     <h2>Comments</h2>
     <ul>

@@ -1,7 +1,29 @@
-{% extends 'base.html' %}
+{% extends 'collector/app_base.html' %}
 
 {% block content %}
 <h1>{{ request.user }}'s collector</h1>
+
+<h2>Curated galleries</h2>
+{% if gallery_list %} 
+{% for gallery in gallery_list %}
+<h3>
+    <a href="{% url 'collector:gallery-detail' gallery.id %}">
+        {{ gallery.title }} 
+    </a>
+</h3>
+{% if gallery.exhibit_set.all %}
+<ul>
+    {% for exhibit in gallery.exhibit_set.all %}
+    <li>
+        {{ exhibit }} ({{ exhibit.works.count }})
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endfor %}
+{% endif %}
+<a href="{% url 'collector:gallery-add' %}">Create a gallery</a>
+
 <h2>Collected works</h2>
 {% if work_list %}
 <ul>
@@ -12,17 +34,4 @@
 {% endif %}
 <a href="{% url 'collector:work-add' %}">Add a work</a>
 
-<h2>Galleries</h2>
-{% if gallery_list %} 
-<ul>
-    {% for gallery in gallery_list %}
-    <li>
-        <a href="{% url 'collector:gallery-detail' gallery.id %}">
-            {{ gallery.title }}
-        </a>
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-<a href="{% url 'collector:gallery-add' %}">Create a gallery</a>
 {% endblock %}

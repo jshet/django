@@ -1,30 +1,31 @@
-{% extends 'base.html' %}
+{% extends 'collector/app_base.html' %}
 
 {% block content %}
-<article>
-    
+
+<article>    
     <h1>{{ gallery.title}}</h1>
+
     {% if request.user == gallery.curator %}
     <a href="{% url 'collector:gallery-delete' gallery.id %}">Delete</a>
     {% endif %}
+
     <p>{{ gallery.curatorial_statement }}</p>
     
     {% for exhibit in gallery.exhibit_set.all %}
-
-<h3>
-    {{ exhibit.title }}
-</h3>
-<p>{{ exhibit.curatorial_statement }}</p>
-
-{% for work in exhibit.works.all %}
-<h4>
-    {{ work.title }}
-</h4>
-{% endfor %}
-
+    <h2>{{ exhibit.title }}</h2>
+    <a href="{% url 'collector:exhibit-update' exhibit.id %}">Edit</a>
+    <p>{{ exhibit.curatorial_statement }}</p>
+        {% for work in exhibit.works.all %}
+        <figure>
+            <img src="{{ work.figure_url_or_default }}" alt="" width="200" height="200">
+            <figcaption>
+                <a href="{% url 'collector:work-detail' work.id %}">{{ work.title }}</a>
+            </figcaption>
+        </figure>
+        {% endfor %}
     {% endfor %}
 
     <a href="{% url 'collector:exhibit-add' gallery.id %}">Add exhibit</a>
-
 </article>
+
 {% endblock %}

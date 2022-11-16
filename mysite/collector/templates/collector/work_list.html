@@ -1,13 +1,23 @@
-{% extends 'base.html' %}
+{% extends 'collector/app_base.html' %}
 
 {% block content %}
+
 <h1>{{ request.user }}'s collected works</h1>
+
 {% if work_list %}
-<ul>
-    {% for work in work_list %}
-    <li><a href="{% url 'collector:work-detail' work.id %}"> {{ work.title }}</a> </li>
-    {% endfor %}
-</ul>
+{% for work in work_list %}
+
+<article>
+    <img src="{{ work.figure_url_or_default }}" alt="" width="400">
+    <a href="{% url 'collector:work-detail' work.id %}">
+        <h3>{{ work.title }}</h3>
+    </a>
+    {{ work.description }}
+</article>
+
+{% endfor %}
 {% endif %}
+
 <a href="{% url 'collector:work-add' %}">Add a work</a>
+
 {% endblock %}
