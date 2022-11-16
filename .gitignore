@@ -1,6 +1,6 @@
 venv
 *.jpg
 *.png
-*.sqlite3
-*.pyc
-**/__pycache__
+
+__pycache__/
+*.py[cod]
