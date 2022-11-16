@@ -14,13 +14,12 @@ def IndexView(request):
         galleries = Gallery.objects.filter(curator=request.user)
         context['gallery_list'] = galleries
     except:
-        galleries = []
+        pass
     try:
         works = Work.objects.filter(collected_by=request.user)
         context['work_list'] = works
     except:
-        works = []
-    context = {'work_list':works, 'gallery_list':galleries}
+        pass
     return render(request, template_name='collector/index.html', context=context)
 
 class WorkCreateView(LoginRequiredMixin, CreateView):
